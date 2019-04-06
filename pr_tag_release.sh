@@ -103,10 +103,10 @@ function export_pr_info() {
 	DRAFT="false"
 	PRERELEASE="false"
 	if [[ "$TITLE" =~ $PRERELEASE_REGEX ]]; then
-		DRAFT="true"
+		PRERELEASE="true"
 	fi
 	if [[ "$TITLE" =~ $DRAFT_REGEX ]]; then
-		PRERELEASE="true"
+		DRAFT="true"
 	fi
 
 	# export results
