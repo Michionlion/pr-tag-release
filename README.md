@@ -28,7 +28,6 @@ after_success:
 deploy:
   provider: releases
   api_key: "$GITHUB_OAUTH_TOKEN"
-  file: pr_tag_release.sh
   skip_cleanup: true
   on:
     all_branches: true
