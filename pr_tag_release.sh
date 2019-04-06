@@ -133,12 +133,11 @@ function create_release_body() {
 		EOF
 	)"
 
+	echo -e " -- Release Description --"
+	echo -e "$RELEASE_BODY"
+
 	# shellcheck disable=SC2155
 	export RELEASE_BODY=$(escape_markdown "$RELEASE_BODY")
-
-	echo -e " -- release description --"
-	echo -e "$RELEASE_BODY"
-	return 0
 }
 
 function set_up_git() {
@@ -157,6 +156,7 @@ function create_version_tag() {
 		echo -e "Failed to push tags!"
 		return 1
 	fi
+	echo -e "Created tag:\n$(git tag -n25 "$TRAVIS_TAG")"
 	return 0
 }
 
@@ -173,6 +173,9 @@ function post_release() {
 		}
 		EOF
 	)"
+
+	echo -e " -- POST Request Body --"
+	echo -e "$data"
 
 	CODE=$(curl -i -s -o /dev/null -w "%{http_code}" \
 		-X "POST" -H "Content-Type: application/json" \
@@ -195,6 +198,8 @@ export_pr_num || return 0
 check_valid_state || return 0
 export_pr_info || return 0
 update_version || return 0
+
+create_release_body
 
 set_up_git
 create_version_tag || return 0
