@@ -229,9 +229,9 @@ status
 export_pr_num || return 0
 check_valid_state || return 0
 export_pr_info || return 0
-update_version || return 0
 
 create_release_body
+update_version || return 0
 
 set_up_git
 create_version_tag || return 0
