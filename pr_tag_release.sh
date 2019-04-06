@@ -95,8 +95,14 @@ function export_pr_info() {
 	get_pr_info "$json" || return 1
 	TITLE="$(jq '.[0]' < "$json")"
 	PR_BODY="$(jq '.[1]' < "$json")"
+
+	# trim quotes
 	PR_BODY="${PR_BODY%\"}"
 	PR_BODY="${PR_BODY#\"}"
+	TITLE="${TITLE%\"}"
+	TITLE="${TITLE#\"}"
+
+	# detect draft/pre
 	DRAFT="false"
 	PRERELEASE="false"
 	if [[ "$TITLE" =~ $PRERELEASE_REGEX ]]; then
@@ -105,10 +111,13 @@ function export_pr_info() {
 	if [[ "$TITLE" =~ $DRAFT_REGEX ]]; then
 		PRERELEASE="true"
 	fi
+
+	# export results
 	export DRAFT
 	export PRERELEASE
 	export TITLE
 	export PR_BODY
+
 	return 0
 }
 
