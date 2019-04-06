@@ -152,7 +152,7 @@ function update_version() {
 function create_release_body() {
 	# Generate release body
 	RELEASE_BODY="$(cat <<-EOF
-		$(echo -e "${TITLE}")
+		#### $(echo -e "${TITLE}")
 
 		$(echo -e "${PR_BODY}")
 
