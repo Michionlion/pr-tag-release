@@ -1,22 +1,27 @@
 #!/bin/bash
 
 LATEST_COMMIT_MSG="$(git log -1 --pretty=%B)"
-LATEST_VERSION="$(git describe --abbrev=0 --tags)"
-echo "READ: $LATEST_VERSION"
-LATEST_VERSION="$(expr "$LATEST_VERSION" : "v\(\d+\.\d+\.\d+\)")"
-echo "FIXED: $LATEST_VERSION"
+LATEST_VERSION=$(git describe --abbrev=0 --tags)
+LATEST_VERSION="${LATEST_VERSION#"v"}"
 VERSION_SPLIT=(${LATEST_VERSION//./ })
+MAJOR=${VERSION_SPLIT[0]}
+MINOR=${VERSION_SPLIT[1]}
+PATCH=${VERSION_SPLIT[2]}
 
-echo "ARRAY: $VERSION_SPLIT"
+echo "Current semver: $MAJOR.$MINOR.$PATCH"
+echo "Commit message: $LATEST_COMMIT_MSG"
 
-#get number parts and increase last one by 1
-MAJOR=${VERSION_BITS[0]}
-MINOR=${VERSION_BITS[1]}
-PATCH=${VERSION_BITS[2]}
+# detect if this was a PR merge, and what PR it was
 
-echo "FINAL: $MAJOR $MINOR $PATCH"
+# get PR body
 
-printf "MSG: %s" $LATEST_COMMIT_MSG
+# detect and do version change
+
+# create new tag for this PR merge commit, push it
+
+# set TRAVIS_TAG to new tag
+
+# set env var with PR body
 
 
 
