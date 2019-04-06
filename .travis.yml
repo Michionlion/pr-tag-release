@@ -5,16 +5,24 @@ env:
     - DEPOY_BRANCH="^master$"
     - secure: smr0GN1APhuIQsvYIZ7q7SufP/ZTTkthJmeJ/pkWYfceIYP4MQ+p7kSr04RVQuz5Cv8x7zi0iEVpSLu4LRkZPTfpKAFigfv0/sPsd7vbckUFs3G2HmhXs0Yaa6HbnE8802GL/FZ87Y8p2FPGgUVmEf39EM5B7kttWg/1U28CBfL5tTPmjqq0g/YmA17I/KoaOaWTgPR/FA/9ueA+QHD3wJO0pj+z0RC6FFVw+ZgYxLU1CJjT+8daAsX3ckbbVf0zXBtACxyjOK7FZWP3nD+wwxGkt6HgmBta5DNqtIEmgpD5w58VnXJ/YmlbIvxmUBDK9AqqdnRFlN7G5163L2rFnO9z929YsS4mcbDRb7Znc0f8uWW7Jkveym7CgbRRlGRujQ2gQWg9VbSt/efSrMvXGBlCUHq+nBIngEieS0HsSVobgIj4cAYan/sUqGS85VrJXXddhTXkssZcbLWYPlpdmB5PFZPAI9FeJIiSbr24+VTdGVwSgszWvzHLrWFuyt+xeilCigSkBBj5bLQK1Ya5POaI9LqrW/Hkyc2XbgQljQdyMz3Zfqy7aD+OmRXq5SIoSZLxkLR1mzjKjQc8Jdo8s0oLjf83e9fbzc/VtuPb1Q1IDm7X8iWBLJZfQrG0oSAsC6Y9IGFzm8CMmVX5WukOLBUPH/EyhScCKd0lXbQ1DeU=
 
+install:
+  - gem install mdl
+
+script:
+  - mdl README.md
+  - shellcheck pr_tag_release.sh
+
+
+# the code below enables pr-tag-release releases
 after_success:
   - source pr_tag_release.sh
-
 deploy:
   provider: releases
   api_key: "$GITHUB_OAUTH_TOKEN"
   file: pr_tag_release.sh
   skip_cleanup: true
   name: "$TRAVIS_TAG"
-  body: "$PR_BODY"
+  body: "$RELEASE_BODY"
   on:
     all_branches: true
     condition: $DO_GITHUB_RELEASE = true
