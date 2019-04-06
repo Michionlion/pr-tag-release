@@ -21,8 +21,6 @@ deploy:
   api_key: "$GITHUB_OAUTH_TOKEN"
   file: pr_tag_release.sh
   skip_cleanup: true
-  name: "$TRAVIS_TAG"
-  body: "$RELEASE_BODY"
   on:
     all_branches: true
     condition: $DO_GITHUB_RELEASE = true
