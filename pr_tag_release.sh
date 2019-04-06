@@ -27,21 +27,18 @@ if [[ "$LATEST_COMMIT_MSG" =~ $MERGE_COMMIT_PREFIX ]]; then
     echo -e "Merged PR #$PR_NUM"
 else
     echo -e "Could not detect PR number from commit message"
-    sleep 0.5
-    exit 0
+    return 0
 fi
 
 if [[ ! -z "$TRAVIS_TAG" ]]; then
     echo -e "Current commit ($TRAVIS_COMMIT) already has a tag"
     echo -e "Don't tag a PR merge commit manually, exiting"
-    sleep 0.5
-    exit 0
+    return 0
 fi
 
 if [[ ! "$TRAVIS_BRANCH" =~ $DEPOY_BRANCH ]]; then
     echo -e "Not on deploy branch, exiting"
-    sleep 0.5
-    exit 0
+    return 0
 fi
 
 RESULT_FILE="${TRAVIS_COMMIT}_pr_tag.json"
@@ -54,8 +51,7 @@ fi
 
 if [[ -z "$(cat $RESULT_FILE)" ]]; then
     echo -e "No result retrieved"
-    sleep 0.5
-    exit 0
+    return 0
 fi
 
 export PR_BODY=$(cat $RESULT_FILE | jq '.[0]')
@@ -78,14 +74,12 @@ elif [[ "$PR_BODY" =~ "${VERSION_CHANGE_PREFIX}${VERSION_CHANGE_TYPES[2]}" ]]; t
 else
     # non-versioned
     echo -e "Detected non-versioned change, exiting"
-    sleep 0.5
-    exit 0
+    return 0
 fi
 
 if [[ "$MERGED" != "true" ]]; then
     echo -e "PR is not merged, exiting"
-    sleep 0.5
-    exit 0
+    return 0
 fi
 
 export TRAVIS_TAG="v$MAJOR.$MINOR.$PATCH"
@@ -95,4 +89,6 @@ git tag $TRAVIS_TAG
 git push --tags
 
 export DO_GITHUB_RELEASE="true"
+
+return 0
 
