@@ -15,7 +15,9 @@ echo "Commit message: $LATEST_COMMIT_MSG"
 
 # get PR body
 
-# detect and do version change
+# detect version change type from PR body
+
+# do version change
 
 # create new tag for this PR merge commit, push it
 
