@@ -6,7 +6,7 @@
 DEPLOY_BRANCH=${DEPOY_BRANCH-"^master$"}
 
 VERSION_CHANGE_PREFIX="This PR is a "
-VERSION_CHANGE_TYPES=("small (change|update)" "feature" "compatibility[ -]breaking (change|update)" "(non-|un)versioned (change|update)")
+VERSION_CHANGE_TYPES=("small (change|update)" "feature" "compatibility[ -]breaking (change|update)")
 
 LATEST_COMMIT_MSG="$(git log -1 --pretty=%B)"
 LATEST_VERSION=$(git describe --abbrev=0 --tags)
@@ -16,17 +16,19 @@ MAJOR=${VERSION_SPLIT[0]-0}
 MINOR=${VERSION_SPLIT[1]-0}
 PATCH=${VERSION_SPLIT[2]-0}
 
-echo "Current semver: $MAJOR.$MINOR.$PATCH"
-echo "Commit message:\n---\n$LATEST_COMMIT_MSG\n---\n"
+echo -e "Current semver: $MAJOR.$MINOR.$PATCH"
+echo -e "Commit message:\n---\n$LATEST_COMMIT_MSG\n---\n"
 
 if [[ ! -z "$TRAVIS_TAG" ]]; then
-    echo "Current commit ($TRAVIS_COMMIT) already has a tag"
-    echo "Don't tag a PR merge commit manually, exiting"
+    echo -e "Current commit ($TRAVIS_COMMIT) already has a tag"
+    echo -e "Don't tag a PR merge commit manually, exiting"
+    sleep 0.5
     exit 0
 fi
 
 if [[ ! "$TRAVIS_BRANCH" =~ $DEPOY_BRANCH ]]; then
-    echo "Not on deploy branch, exiting"
+    echo -e "Not on deploy branch, exiting"
+    sleep 0.5
     exit 0
 fi
 
@@ -39,14 +41,15 @@ else
 fi
 
 if [[ -z "$(cat $RESULT_FILE)" ]]; then
-    echo "No result retrieved"
+    echo -e "No result retrieved"
+    sleep 0.5
     exit 0
 fi
 
 export PR_BODY=$(cat $RESULT_FILE | jq '.[0]')
 export MERGED=$(cat $RESULT_FILE | jq '.[1]')
 
-echo "PR_BODY: \n$PR_BODY"
+echo -e "PR_BODY: \n$PR_BODY"
 
 if [[ "$PR_BODY" =~ "${VERSION_CHANGE_PREFIX}${VERSION_CHANGE_TYPES[0]}" ]]; then
     # patch version
@@ -55,19 +58,21 @@ elif [[ "$PR_BODY" =~ "${VERSION_CHANGE_PREFIX}${VERSION_CHANGE_TYPES[1]}" ]]; t
     # minor version
     PATCH="0"
     MINOR=$((MINOR+1))
-elif [[ "$PR_BODY" =~ "${VERSION_CHANGE_PREFIX}${VERSION_CHANGE_TYPES[1]}" ]]; then
+elif [[ "$PR_BODY" =~ "${VERSION_CHANGE_PREFIX}${VERSION_CHANGE_TYPES[2]}" ]]; then
     # major version
     PATCH="0"
     MINOR="0"
     MAJOR=$((MAJOR+1))
 else
     # non-versioned
-    echo "Detected non-versioned change, exiting"
+    echo -e "Detected non-versioned change, exiting"
+    sleep 0.5
     exit 0
 fi
 
 if [[ "$MERGED" != "true" ]]; then
-    echo "PR is not merged, exiting"
+    echo -e "PR is not merged, exiting"
+    sleep 0.5
     exit 0
 fi
 
