@@ -10,6 +10,8 @@ MERGE_COMMIT_REGEX=${MERGE_COMMIT_REGEX-"Merge pull request #([0-9]+)"}
 PATCH_CHANGE_REGEX=${PATCH_CHANGE_REGEX-"This (PR|release) is an?( small| tiny)? (update|bugfix)"}
 MINOR_CHANGE_REGEX=${MINOR_CHANGE_REGEX-"This (PR|release) is a (feature( update| change)?|big (update|change))"}
 MAJOR_CHANGE_REGEX=${MAJOR_CHANGE_REGEX-"This (PR|release) (is a (compatibility[ -])?breaking (update|change)| breaks( backwards)? compatibility)"}
+PRERELEASE_REGEX=${PRERELEASE_REGEX-"\[(PRE|WIP|PRERELEASE)\]"}
+DRAFT_REGEX=${DRAFT_REGEX-"\[(WIP|DRAFT)\]"}
 
 LATEST_COMMIT_MSG="$(git log -1 --pretty=%B)"
 LATEST_VERSION=$(git describe --abbrev=0 --tags)
@@ -95,7 +97,16 @@ function export_pr_info() {
 	PR_BODY="$(jq '.[1]' < "$json")"
 	PR_BODY="${PR_BODY%\"}"
 	PR_BODY="${PR_BODY#\"}"
-
+	DRAFT="false"
+	PRERELEASE="false"
+	if [[ "$TITLE" =~ $PRERELEASE_REGEX ]]; then
+		DRAFT="true"
+	fi
+	if [[ "$TITLE" =~ $DRAFT_REGEX ]]; then
+		PRERELEASE="true"
+	fi
+	export DRAFT
+	export PRERELEASE
 	export TITLE
 	export PR_BODY
 	return 0
@@ -183,8 +194,8 @@ function post_release() {
 			"target_commitish": "${TRAVIS_BRANCH}",
 			"name": "${TRAVIS_TAG}",
 			"body": "${RELEASE_BODY}",
-			"draft": false,
-			"prerelease": false
+			"draft": ${DRAFT},
+			"prerelease": ${PRERELEASE}
 		}
 		EOF
 	)"
