@@ -34,15 +34,21 @@ function escape_markdown() {
 }
 
 function status() {
-	echo -e "Current semver: $MAJOR.$MINOR.$PATCH"
-	echo -e "Commit message: $LATEST_COMMIT_MSG"
+	echo -e "==> Current Semantic Version"
+	echo -e "$MAJOR.$MINOR.$PATCH"
+	echo -e "<=="
+	echo -e "==> Commit Message"
+	echo -e "$LATEST_COMMIT_MSG"
+	echo -e "<=="
 }
 
 function export_pr_num() {
 	# detect if merge commit (uses Github's default message from the web interface)
 	if [[ "$LATEST_COMMIT_MSG" =~ $MERGE_COMMIT_REGEX ]]; then
 		export PR_NUM="${BASH_REMATCH[1]}"
-		echo -e "Detected merged pull request as PR #$PR_NUM"
+		echo -e "==> Detected merged pull request"
+		echo -e "PR #$PR_NUM"
+		echo -e "<=="
 		return 0
 	else
 		echo -e "Could not detect PR number from commit message, exiting"
@@ -97,28 +103,33 @@ function export_pr_info() {
 
 # must have access to $PR_BODY
 function update_version() {
+	local update
 	if [[ "$PR_BODY" =~ $PATCH_CHANGE_REGEX ]]; then
 		# patch version
 		PATCH=$((PATCH+1))
-		echo -e "Detected patch version change"
+		update="Patch"
 	elif [[ "$PR_BODY" =~ $MINOR_CHANGE_REGEX ]]; then
 		# minor version
 		PATCH="0"
 		MINOR=$((MINOR+1))
-		echo -e "Detected minor version change"
+		update="Minor"
 	elif [[ "$PR_BODY" =~ $MAJOR_CHANGE_REGEX ]]; then
 		# major version
 		PATCH="0"
 		MINOR="0"
 		MAJOR=$((MAJOR+1))
-		echo -e "Detected major version change"
+		update="Major"
 	else
 		# non-versioned
 		unset TRAVIS_TAG
-		echo -e "Detected non-versioned change, exiting"
+		echo -e "Detected unversioned change, exiting"
 		return 1
 	fi
-	export TRAVIS_TAG="v$MAJOR.$MINOR.$PATCH"
+	TRAVIS_TAG="$MAJOR.$MINOR.$PATCH"
+	echo -e "==> Updated Semantic Version"
+	echo -e "$update version update to $TRAVIS_TAG"
+	echo -e "<=="
+	export TRAVIS_TAG="v$TRAVIS_TAG"
 	return 0
 }
 
@@ -133,8 +144,10 @@ function create_release_body() {
 		EOF
 	)"
 
-	echo -e " -- Release Description --"
+	echo -e "==> Release Description"
 	echo -e "$RELEASE_BODY"
+	echo -e "<=="
+
 
 	# shellcheck disable=SC2155
 	export RELEASE_BODY=$(escape_markdown "$RELEASE_BODY")
@@ -156,7 +169,9 @@ function create_version_tag() {
 		echo -e "Failed to push tags!"
 		return 1
 	fi
-	echo -e "Created tag:\n$(git tag -n25 "$TRAVIS_TAG")"
+	echo -e "==> Created Tag"
+	echo -e "$(git tag -n25 "$TRAVIS_TAG")"
+	echo -e "<=="
 	return 0
 }
 
@@ -174,13 +189,18 @@ function post_release() {
 		EOF
 	)"
 
-	echo -e " -- POST Request Body --"
-	echo -e "$data"
+	echo -e "==> POST Request Body"
+	echo "$data"
+	echo -e "<=="
 
 	CODE=$(curl -i -s -o /dev/null -w "%{http_code}" \
 		-X "POST" -H "Content-Type: application/json" \
 		-H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -d "$data" \
 		"https://api.github.com/repos/${TRAVIS_REPO_SLUG}/releases")
+
+	echo -e "==> POST Request Response"
+	echo "$CODE"
+	echo -e "<=="
 
 	if [[ ! "$CODE" -eq "201" ]]; then
 		echo -e "Failed to create release!"
