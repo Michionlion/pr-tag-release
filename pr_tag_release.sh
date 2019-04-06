@@ -7,6 +7,8 @@ DEPLOY_BRANCH=${DEPOY_BRANCH-"^master$"}
 
 VERSION_CHANGE_PREFIX="This PR is a "
 VERSION_CHANGE_TYPES=("small (change|update)" "feature" "compatibility[ -]breaking (change|update)")
+MERGE_COMMIT_PREFIX="Merge pull request #([0-9]+)"
+
 
 LATEST_COMMIT_MSG="$(git log -1 --pretty=%B)"
 LATEST_VERSION=$(git describe --abbrev=0 --tags)
@@ -18,6 +20,16 @@ PATCH=${VERSION_SPLIT[2]-0}
 
 echo -e "Current semver: $MAJOR.$MINOR.$PATCH"
 echo -e "Commit message:\n---\n$LATEST_COMMIT_MSG\n---\n"
+
+# detect if merge commit (uses Github's default message from the web interface)
+if [[ "$LATEST_COMMIT_MSG" =~ $MERGE_COMMIT_PREFIX ]]; then
+    export PR_NUM="${BASH_REMATCH[1]}"
+    echo -e "Merged PR #$PR_NUM"
+else
+    echo -e "Could not detect PR number from commit message"
+    sleep 0.5
+    exit 0
+fi
 
 if [[ ! -z "$TRAVIS_TAG" ]]; then
     echo -e "Current commit ($TRAVIS_COMMIT) already has a tag"
