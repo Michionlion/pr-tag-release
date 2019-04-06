@@ -38,10 +38,8 @@ function escape_markdown() {
 function status() {
 	echo -e "==> Current Semantic Version"
 	echo -e "$MAJOR.$MINOR.$PATCH"
-	echo -e "<=="
 	echo -e "==> Commit Message"
 	echo -e "$LATEST_COMMIT_MSG"
-	echo -e "<=="
 }
 
 function export_pr_num() {
@@ -50,7 +48,6 @@ function export_pr_num() {
 		export PR_NUM="${BASH_REMATCH[1]}"
 		echo -e "==> Detected merged pull request"
 		echo -e "PR #$PR_NUM"
-		echo -e "<=="
 		return 0
 	else
 		echo -e "Could not detect PR number from commit message, exiting"
@@ -148,7 +145,6 @@ function update_version() {
 	TRAVIS_TAG="$MAJOR.$MINOR.$PATCH"
 	echo -e "==> Updated Semantic Version"
 	echo -e "$update version update to $TRAVIS_TAG"
-	echo -e "<=="
 	export TRAVIS_TAG="v$TRAVIS_TAG"
 	return 0
 }
@@ -166,7 +162,6 @@ function create_release_body() {
 
 	echo -e "==> Release Description"
 	echo -e "$RELEASE_BODY"
-	echo -e "<=="
 
 
 	# shellcheck disable=SC2155
@@ -191,7 +186,6 @@ function create_version_tag() {
 	fi
 	echo -e "==> Created Tag"
 	echo -e "$(git tag -n25 "$TRAVIS_TAG")"
-	echo -e "<=="
 	return 0
 }
 
@@ -211,7 +205,6 @@ function post_release() {
 
 	echo -e "==> POST Request Body"
 	echo "$data"
-	echo -e "<=="
 
 	CODE=$(curl -i -s -o /dev/null -w "%{http_code}" \
 		-X "POST" -H "Content-Type: application/json" \
@@ -220,7 +213,6 @@ function post_release() {
 
 	echo -e "==> POST Request Response"
 	echo "$CODE"
-	echo -e "<=="
 
 	if [[ ! "$CODE" -eq "201" ]]; then
 		echo -e "Failed to create release!"
