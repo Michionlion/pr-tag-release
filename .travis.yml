@@ -14,7 +14,11 @@ script:
 
 
 # the code below enables pr-tag-release releases
+# note that in this repository the downloaded script
+# is not actually run, because we already have a file
+# named `pr_tag_release.sh`
 after_success:
+  - wget https://github.com/Michionlion/pr-tag-release/releases/latest/download/pr_tag_release.sh
   - source pr_tag_release.sh
 deploy:
   provider: releases
