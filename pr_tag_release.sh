@@ -7,7 +7,7 @@
 
 DEPLOY_BRANCH=${DEPOY_BRANCH-"^master$"}
 MERGE_COMMIT_REGEX=${MERGE_COMMIT_REGEX-"Merge pull request #([0-9]+)"}
-PATCH_CHANGE_REGEX=${PATCH_CHANGE_REGEX-"This (PR|release) is an?( small| tiny)? (update|bugfix)"}
+PATCH_CHANGE_REGEX=${PATCH_CHANGE_REGEX-"This (PR|release) is an?( small| tiny)? (update|bugfix|change)"}
 MINOR_CHANGE_REGEX=${MINOR_CHANGE_REGEX-"This (PR|release) is a (feature( update| change)?|big (update|change))"}
 MAJOR_CHANGE_REGEX=${MAJOR_CHANGE_REGEX-"This (PR|release) (is a ((compatibility[ -])?breaking|major) (update|change)| breaks( backwards)? compatibility)"}
 PRERELEASE_REGEX=${PRERELEASE_REGEX-"\[(PRE|WIP|PRERELEASE)\]"}
@@ -229,9 +229,9 @@ status
 export_pr_num || return 0
 check_valid_state || return 0
 export_pr_info || return 0
-update_version || return 0
 
 create_release_body
+update_version || return 0
 
 set_up_git
 create_version_tag || return 0
