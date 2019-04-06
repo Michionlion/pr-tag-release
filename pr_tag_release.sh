@@ -194,7 +194,7 @@ function post_release() {
 	local data="$(cat <<-EOF
 		{
 			"tag_name": "${TRAVIS_TAG}",
-			"target_commitish": "${TRAVIS_BRANCH}",
+			"target_commitish": "${TRAVIS_COMMIT}",
 			"name": "${TRAVIS_TAG}",
 			"body": "${RELEASE_BODY}",
 			"draft": ${DRAFT},
