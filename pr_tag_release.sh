@@ -19,8 +19,8 @@ MAJOR=${VERSION_SPLIT[0]-0}
 MINOR=${VERSION_SPLIT[1]-0}
 PATCH=${VERSION_SPLIT[2]-0}
 
-EMAIL="travis@travis-ci.com"
-USER="Travis CI"
+GIT_EMAIL="travis@travis-ci.com"
+GIT_USER="Travis CI"
 
 
 
@@ -142,8 +142,8 @@ function create_release_body() {
 }
 
 function set_up_git() {
-	git config --global user.email "$EMAIL"
-	git config --global user.name "$USER"
+	git config --global user.email "$GIT_EMAIL"
+	git config --global user.name "$GIT_USER"
 
 	# set remote url to use GITHUB_OAUTH_TOKEN
 	# assumes github.com, normal url, etc.
