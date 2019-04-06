@@ -1,14 +1,20 @@
 language: generic
 
-script:
+env:
+  global:
+    - DEPOY_BRANCH="^master$"
+    secure: smr0GN1APhuIQsvYIZ7q7SufP/ZTTkthJmeJ/pkWYfceIYP4MQ+p7kSr04RVQuz5Cv8x7zi0iEVpSLu4LRkZPTfpKAFigfv0/sPsd7vbckUFs3G2HmhXs0Yaa6HbnE8802GL/FZ87Y8p2FPGgUVmEf39EM5B7kttWg/1U28CBfL5tTPmjqq0g/YmA17I/KoaOaWTgPR/FA/9ueA+QHD3wJO0pj+z0RC6FFVw+ZgYxLU1CJjT+8daAsX3ckbbVf0zXBtACxyjOK7FZWP3nD+wwxGkt6HgmBta5DNqtIEmgpD5w58VnXJ/YmlbIvxmUBDK9AqqdnRFlN7G5163L2rFnO9z929YsS4mcbDRb7Znc0f8uWW7Jkveym7CgbRRlGRujQ2gQWg9VbSt/efSrMvXGBlCUHq+nBIngEieS0HsSVobgIj4cAYan/sUqGS85VrJXXddhTXkssZcbLWYPlpdmB5PFZPAI9FeJIiSbr24+VTdGVwSgszWvzHLrWFuyt+xeilCigSkBBj5bLQK1Ya5POaI9LqrW/Hkyc2XbgQljQdyMz3Zfqy7aD+OmRXq5SIoSZLxkLR1mzjKjQc8Jdo8s0oLjf83e9fbzc/VtuPb1Q1IDm7X8iWBLJZfQrG0oSAsC6Y9IGFzm8CMmVX5WukOLBUPH/EyhScCKd0lXbQ1DeU=
+
+after_success:
   - source pr_tag_release.sh
 
 deploy:
   provider: releases
-  api_key:
-    secure: T739Vg/yQQ5CP34WKmxlS4QY0ZOi/w80IsATKS0e3qgNxWjYngQmJrGij3/wo0+yoWLLp9oSKgvuJnLGw98FFVaVq4iB1415rO2k1DGyHJzef7DWOs/DlBopGEi0N0Sbdz6z1tRZ8x3MszEtL9YU3mEixQ41uN68zGuw0pYEY754AhLLP9fZDuXESyiHevEf0zPn/ZbX2qVbjcGcVNllo615xhYnVdPWtmnTC9ytf6colQ/L7kSxR0f0HpU9G27ccI6XbaS4gHNMuT7VyXc1mkcbgj8xQCQHOH58B72q+p2JAjPZDXyNuxrOnq/xvubZ1Z0u+yKDPKNCSbW9pKOLvgXigw0TH3uU84ZR99WE4O2NgmRVPPiCAYM2hzqyGjfijKHVuJBkz1SKl1zaG5KZhzU7176zHbB7IFrWIiF2ArMd+giR5ZwF8w7QqjmeBMw58AdhQaBxTjsgdmUugMP3Yp1kuxavTKi8OcgI+XmYsdGVuC6tOsz4f9u438Yr9vEs7liXgrModJiqKwYK9g8LpGVTH3vm5oAu1YXM1Q6wBf4kuH/rnxNmC+lH+03j6CbmdMqC8Y0YhCP5iDnrjSx87FdGzh5e2BjpkF31YTbuRgp1Tn+nMXiTFyz18XJ1qA14vpLLql6OgT5diOyOExN5k9QQrvF458/UJSGtgoDX//I=
+  api_key: "$GITHUB_OAUTH_TOKEN"
   file: pr_tag_release.sh
   skip_cleanup: true
-  body: $PR_BODY
+  name: "$TRAVIS_TAG"
+  body: "$PR_BODY"
   on:
-    tags: true
+    all_branches: true
+    condition: $DO_GITHUB_RELEASE = true
