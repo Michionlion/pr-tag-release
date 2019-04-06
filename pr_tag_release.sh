@@ -6,7 +6,9 @@
 DEPLOY_BRANCH=${DEPOY_BRANCH-"^master$"}
 
 VERSION_CHANGE_PREFIX="This PR is a "
-VERSION_CHANGE_TYPES=("small (change|update)" "feature" "compatibility[ -]breaking (change|update)" "(non-|un)versioned (change|update)")
+VERSION_CHANGE_TYPES=("small (change|update)" "feature" "compatibility[ -]breaking (change|update)")
+MERGE_COMMIT_PREFIX="Merge pull request #([0-9]+)"
+
 
 LATEST_COMMIT_MSG="$(git log -1 --pretty=%B)"
 LATEST_VERSION=$(git describe --abbrev=0 --tags)
@@ -16,18 +18,27 @@ MAJOR=${VERSION_SPLIT[0]-0}
 MINOR=${VERSION_SPLIT[1]-0}
 PATCH=${VERSION_SPLIT[2]-0}
 
-echo "Current semver: $MAJOR.$MINOR.$PATCH"
-echo "Commit message:\n---\n$LATEST_COMMIT_MSG\n---\n"
+echo -e "Current semver: $MAJOR.$MINOR.$PATCH"
+echo -e "Commit message:\n---\n$LATEST_COMMIT_MSG\n---\n"
+
+# detect if merge commit (uses Github's default message from the web interface)
+if [[ "$LATEST_COMMIT_MSG" =~ $MERGE_COMMIT_PREFIX ]]; then
+    export PR_NUM="${BASH_REMATCH[1]}"
+    echo -e "Merged PR #$PR_NUM"
+else
+    echo -e "Could not detect PR number from commit message"
+    return 0
+fi
 
 if [[ ! -z "$TRAVIS_TAG" ]]; then
-    echo "Current commit ($TRAVIS_COMMIT) already has a tag"
-    echo "Don't tag a PR merge commit manually, exiting"
-    exit 0
+    echo -e "Current commit ($TRAVIS_COMMIT) already has a tag"
+    echo -e "Don't tag a PR merge commit manually, exiting"
+    return 0
 fi
 
 if [[ ! "$TRAVIS_BRANCH" =~ $DEPOY_BRANCH ]]; then
-    echo "Not on deploy branch, exiting"
-    exit 0
+    echo -e "Not on deploy branch, exiting"
+    return 0
 fi
 
 RESULT_FILE="${TRAVIS_COMMIT}_pr_tag.json"
@@ -39,14 +50,14 @@ else
 fi
 
 if [[ -z "$(cat $RESULT_FILE)" ]]; then
-    echo "No result retrieved"
-    exit 0
+    echo -e "No result retrieved"
+    return 0
 fi
 
 export PR_BODY=$(cat $RESULT_FILE | jq '.[0]')
 export MERGED=$(cat $RESULT_FILE | jq '.[1]')
 
-echo "PR_BODY: \n$PR_BODY"
+echo -e "PR_BODY: \n$PR_BODY"
 
 if [[ "$PR_BODY" =~ "${VERSION_CHANGE_PREFIX}${VERSION_CHANGE_TYPES[0]}" ]]; then
     # patch version
@@ -55,20 +66,20 @@ elif [[ "$PR_BODY" =~ "${VERSION_CHANGE_PREFIX}${VERSION_CHANGE_TYPES[1]}" ]]; t
     # minor version
     PATCH="0"
     MINOR=$((MINOR+1))
-elif [[ "$PR_BODY" =~ "${VERSION_CHANGE_PREFIX}${VERSION_CHANGE_TYPES[1]}" ]]; then
+elif [[ "$PR_BODY" =~ "${VERSION_CHANGE_PREFIX}${VERSION_CHANGE_TYPES[2]}" ]]; then
     # major version
     PATCH="0"
     MINOR="0"
     MAJOR=$((MAJOR+1))
 else
     # non-versioned
-    echo "Detected non-versioned change, exiting"
-    exit 0
+    echo -e "Detected non-versioned change, exiting"
+    return 0
 fi
 
 if [[ "$MERGED" != "true" ]]; then
-    echo "PR is not merged, exiting"
-    exit 0
+    echo -e "PR is not merged, exiting"
+    return 0
 fi
 
 export TRAVIS_TAG="v$MAJOR.$MINOR.$PATCH"
@@ -78,4 +89,6 @@ git tag $TRAVIS_TAG
 git push --tags
 
 export DO_GITHUB_RELEASE="true"
+
+return 0
 
