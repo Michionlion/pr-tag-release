@@ -21,7 +21,7 @@ echo -e "Current semver: $MAJOR.$MINOR.$PATCH"
 echo -e "Commit message: $LATEST_COMMIT_MSG"
 
 # detect if merge commit (uses Github's default message from the web interface)
-if [[ "$LATEST_COMMIT_MSG" =~ $MERGE_COMMIT_PREFIX ]]; then
+if [[ "$LATEST_COMMIT_MSG" =~ $MERGE_COMMIT_REGEX ]]; then
     export PR_NUM="${BASH_REMATCH[1]}"
     echo -e "Detected merged pull request as PR #$PR_NUM"
 else
