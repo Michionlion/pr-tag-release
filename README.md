@@ -23,6 +23,7 @@ Including the below `yaml` in your `.travis.yml` and providing the
 
 ```yaml
 after_success:
+  - wget https://github.com/Michionlion/pr-tag-release/releases/latest/download/pr_tag_release.sh
   - source pr_tag_release.sh
 deploy:
   provider: releases
