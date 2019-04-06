@@ -96,10 +96,12 @@ git config --global user.email "travis@travis-ci.org"
 git config --global user.name "Travis CI"
 
 # set remote url to use GITHUB_OAUTH_TOKEN
+# assumes github.com, normal url, etc.
+export REMOTE_URL="https://${GITHUB_OAUTH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git"
 
 # create tag
 git tag $TRAVIS_TAG
-git push --tags
+git push $REMOTE_URL --tags
 
 export DO_GITHUB_RELEASE="true"
 
