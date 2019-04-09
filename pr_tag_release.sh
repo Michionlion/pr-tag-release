@@ -24,9 +24,56 @@ PATCH=${VERSION_SPLIT[2]-0}
 GIT_EMAIL="travis@travis-ci.com"
 GIT_USER="Travis CI"
 
+PATCH_LABEL_COLOR="23e059"
+PATCH_LABEL_NAME="patch"
+PATCH_LABEL_DESC="This PR updates the patch version: v0.0.X"
+
+MINOR_LABEL_COLOR="14a3bc"
+MINOR_LABEL_NAME="minor"
+MINOR_LABEL_DESC="This PR updates the patch version: v0.X.0"
+
+MAJOR_LABEL_COLOR="c60f7a"
+MAJOR_LABEL_NAME="major"
+MAJOR_LABEL_DESC="This PR updates the major version: vX.0.0"
 
 
-### Functions ###
+
+function ensure_labels() {
+	ISSUE_NUM="$1"
+
+	# get list
+	OUTPUT=$(curl -X "GET" -H "Content-Type: application/json" \
+		-H "Accept: application/vnd.github.symmetra-preview+json" \
+		-H "Authorization: token ${GITHUB_OAUTH_TOKEN}" -d "$data" \
+		"https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${ISSUE_NUM}/labels")
+
+	echo -e "==> POST Request Response"
+	echo -e "RESULT: $OUTPUT"
+
+	if [[ ! "$CODE" -eq "201" ]]; then
+		echo -e "Failed to create release!"
+		return 1
+	fi
+	
+	# shellcheck disable=SC2155
+	local data="$(cat <<-EOF
+		{
+			"tag_name": "${TRAVIS_TAG}",
+			"target_commitish": "${TRAVIS_COMMIT}",
+			"name": "${TRAVIS_TAG}",
+			"body": "${RELEASE_BODY}",
+			"draft": ${DRAFT},
+			"prerelease": ${PRERELEASE}
+		}
+		EOF
+	)"
+
+	echo -e "==> POST Request Body"
+	echo "$data"
+
+}
+
+
 
 function escape_markdown() {
 	escaped=$(printf '%s' "$1" | python -c 'import json,sys; print(json.dumps(sys.stdin.read()))')
