@@ -256,18 +256,18 @@ function update_version() {
 	if [[ "$PR_BODY" =~ $PATCH_CHANGE_REGEX ]]; then
 		# patch version
 		PATCH=$((PATCH+1))
-		UPDATE_TYPE="Patch"
+		UPDATE_TYPE="patch"
 	elif [[ "$PR_BODY" =~ $MINOR_CHANGE_REGEX ]]; then
 		# minor version
 		PATCH="0"
 		MINOR=$((MINOR+1))
-		UPDATE_TYPE="Minor"
+		UPDATE_TYPE="minor"
 	elif [[ "$PR_BODY" =~ $MAJOR_CHANGE_REGEX ]]; then
 		# major version
 		PATCH="0"
 		MINOR="0"
 		MAJOR=$((MAJOR+1))
-		UPDATE_TYPE="Major"
+		UPDATE_TYPE="major"
 	else
 		# non-versioned
 		unset TRAVIS_TAG
@@ -276,7 +276,7 @@ function update_version() {
 	fi
 	TRAVIS_TAG="$MAJOR.$MINOR.$PATCH"
 	echo -e "==> Updated Semantic Version"
-	echo -e "$update version update to $TRAVIS_TAG"
+	echo -e "${UPDATE_TYPE^} version update to $TRAVIS_TAG"
 	export TRAVIS_TAG="v$TRAVIS_TAG"
 	export UPDATE_TYPE
 	return 0
