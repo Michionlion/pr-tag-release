@@ -152,6 +152,7 @@ function update_label() {
 	create_labels || return 1
 	local label;
 	label="${UPDATE_TYPE^^}_LABEL_NAME"
+	label=${!label}
 	echo -e "==> Set Label"
 	set_label_on "$PR_NUM" "$label" || return 1
 	return 0
