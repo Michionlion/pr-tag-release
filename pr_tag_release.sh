@@ -5,7 +5,6 @@
 
 ### Variable Setup ###
 
-DEPLOY_BRANCH=${DEPOY_BRANCH-"^master$"}
 MERGE_COMMIT_REGEX=${MERGE_COMMIT_REGEX-"Merge pull request #([0-9]+)"}
 PATCH_CHANGE_REGEX=${PATCH_CHANGE_REGEX-"This (PR|release) is an?( small| tiny)? (update|bugfix|change)"}
 MINOR_CHANGE_REGEX=${MINOR_CHANGE_REGEX-"This (PR|release) is a (feature( update| change)?|big (update|change))"}
@@ -24,17 +23,17 @@ PATCH=${VERSION_SPLIT[2]-0}
 GIT_EMAIL="travis@travis-ci.com"
 GIT_USER="Travis CI"
 
-PATCH_LABEL_COLOR="14a3bc"
-PATCH_LABEL_NAME="patch"
-PATCH_LABEL_DESC="This PR updates the patch version: v0.0.X"
+export PATCH_LABEL_COLOR="14a3bc"
+export PATCH_LABEL_NAME="patch"
+export PATCH_LABEL_DESC="This PR updates the patch version: v0.0.X"
 
-MINOR_LABEL_COLOR="23e059"
-MINOR_LABEL_NAME="minor"
-MINOR_LABEL_DESC="This PR updates the minor version: v0.X.0"
+export MINOR_LABEL_COLOR="23e059"
+export MINOR_LABEL_NAME="minor"
+export MINOR_LABEL_DESC="This PR updates the minor version: v0.X.0"
 
-MAJOR_LABEL_COLOR="c60f7a"
-MAJOR_LABEL_NAME="major"
-MAJOR_LABEL_DESC="This PR updates the major version: vX.0.0"
+export MAJOR_LABEL_COLOR="c60f7a"
+export MAJOR_LABEL_NAME="major"
+export MAJOR_LABEL_DESC="This PR updates the major version: vX.0.0"
 
 
 function does_label_exist() {
