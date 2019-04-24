@@ -182,16 +182,16 @@ function export_pr_num() {
 	if [[ "$LATEST_COMMIT_MSG" =~ $MERGE_COMMIT_REGEX ]]; then
 		export PR_NUM="${BASH_REMATCH[1]}"
 		echo -e "==> Detected merged pull request"
-		echo -e "PR #$PR_NUM"
-		return 0
 	elif is_pr; then
 		export PR_NUM=$TRAVIS_PULL_REQUEST
 		echo -e "==> Detected open pull request"
-		return 0
 	else
 		echo -e "Could not detect PR number from commit message or PR build, exiting"
 		return 1
 	fi
+	
+	echo -e "PR #$PR_NUM"
+	return 0
 }
 
 function check_valid_state() {
