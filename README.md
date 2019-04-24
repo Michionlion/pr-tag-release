@@ -9,7 +9,6 @@ that the `PRERELEASE_REGEX` and `DRAFT_REGEX` are applied to the ***title*** of
 the Pull Request, unlike the others, which apply to the body.
 
 ```bash
-DEPLOY_BRANCH=${DEPOY_BRANCH-"^master$"}
 MERGE_COMMIT_REGEX=${MERGE_COMMIT_REGEX-"Merge pull request #([0-9]+)"}
 PATCH_CHANGE_REGEX=${PATCH_CHANGE_REGEX-"This (PR|release) is an?( small| tiny)? (update|bugfix|change)"}
 MINOR_CHANGE_REGEX=${MINOR_CHANGE_REGEX-"This (PR|release) is a (feature( update| change)?|big (update|change))"}
@@ -30,6 +29,6 @@ deploy:
   api_key: "$GITHUB_OAUTH_TOKEN"
   skip_cleanup: true
   on:
-    all_branches: true
+    branch: master
     condition: $DO_GITHUB_RELEASE = true
 ```
