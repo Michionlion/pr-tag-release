@@ -23,17 +23,17 @@ PATCH=${VERSION_SPLIT[2]-0}
 GIT_EMAIL="travis@travis-ci.com"
 GIT_USER="Travis CI"
 
-export PATCH_LABEL_COLOR="14a3bc"
-export PATCH_LABEL_NAME="patch"
-export PATCH_LABEL_DESC="This PR updates the patch version: v0.0.X"
+PATCH_LABEL_COLOR=${PATCH_LABEL_COLOR-"14a3bc"}
+PATCH_LABEL_NAME=${PATCH_LABEL_NAME-"patch"}
+PATCH_LABEL_DESC=${PATCH_LABEL_DESC-"This PR updates the patch version: v0.0.X"}
 
-export MINOR_LABEL_COLOR="23e059"
-export MINOR_LABEL_NAME="minor"
-export MINOR_LABEL_DESC="This PR updates the minor version: v0.X.0"
+MINOR_LABEL_COLOR=${MINOR_LABEL_COLOR-"23e059"}
+MINOR_LABEL_NAME=${MINOR_LABEL_NAME-"minor"}
+MINOR_LABEL_DESC=${MINOR_LABEL_DESC-"This PR updates the minor version: v0.X.0"}
 
-export MAJOR_LABEL_COLOR="c60f7a"
-export MAJOR_LABEL_NAME="major"
-export MAJOR_LABEL_DESC="This PR updates the major version: vX.0.0"
+MAJOR_LABEL_COLOR=${MAJOR_LABEL_COLOR-"c60f7a"}
+MAJOR_LABEL_NAME=${MAJOR_LABEL_NAME-"major"}
+MAJOR_LABEL_DESC=${MAJOR_LABEL_DESC-"This PR updates the major version: vX.0.0"}
 
 
 function does_label_exist() {
